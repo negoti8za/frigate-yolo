@@ -1,0 +1,35 @@
+# ============================================================
+# Frigate detector config — YOLOv9-s 320x320  (Intel iGPU)
+# ============================================================
+# 1. Copy  yolov9_s_320_frigate_intel.onnx  to /config/model_cache/ on your Frigate host
+# 2. Merge the sections below into your Frigate config.yml
+# 3. Use Frigate image:  ghcr.io/blakeblackshear/frigate:stable
+#    (OpenVINO is built-in to the default image)
+#
+# 320x320 recommended for iGPU — Frigate crops frames before sending
+# ============================================================
+
+detectors:
+  openvino_detector:
+    type: openvino
+    device: GPU
+    model:
+      path: /config/model_cache/yolov9_s_320_frigate_intel.onnx
+      width: 320
+      height: 320
+      input_tensor: nchw
+      input_pixel_format: rgb
+      input_dtype: float
+      model_type: yolo-generic
+      labelmap_path: /labelmap/coco-80.txt
+
+cameras:
+  my_camera:
+    detect:
+      width: 320
+      height: 320
+    objects:
+      filters:
+        person:
+          min_score: 0.5
+          threshold: 0.7

@@ -1,0 +1,42 @@
+# ============================================================
+# Frigate detector config — YOLOv9-s 640x640  (NVIDIA GPU)
+# ============================================================
+# 1. Copy  yolov9_s_640_frigate_cuda.onnx  to /config/model_cache/ on your Frigate host
+# 2. Merge the sections below into your Frigate config.yml
+# 3. Use Frigate image:  ghcr.io/blakeblackshear/frigate:stable
+#    (TensorRT was removed in recent Frigate; ONNX is the only Nvidia path)
+# ============================================================
+
+detectors:
+  onnx_cuda_detector:
+    type: onnx
+    model:
+      path: /config/model_cache/yolov9_s_640_frigate_cuda.onnx
+      width: 640
+      height: 640
+      input_tensor: nchw
+      input_pixel_format: rgb
+      input_dtype: float
+      model_type: yolo-generic
+      labelmap_path: /labelmap/coco-80.txt
+
+cameras:
+  my_camera:
+    detect:
+      width: 640
+      height: 640
+    objects:
+      filters:
+        person:
+          min_score: 0.5
+          threshold: 0.7
+
+# ── Docker Compose additions for Nvidia GPU ──
+# runtime: nvidia
+# deploy:
+#   resources:
+#     reservations:
+#       devices:
+#         - driver: nvidia
+#           count: 1
+#           capabilities: [gpu]
